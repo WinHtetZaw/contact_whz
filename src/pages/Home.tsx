@@ -1,7 +1,10 @@
-import Counter from "../components/Counter";
-
+import ContactTable from "../components/ContactTable";
 const Home = () => {
-  return <Counter />;
+  return (
+    <>
+      <ContactTable />
+    </>
+  );
 };
 
 export default Home;
