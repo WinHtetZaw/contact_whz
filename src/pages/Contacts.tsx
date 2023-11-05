@@ -7,6 +7,10 @@ import { useContactsQuery } from "../rtk/services/contactApi";
 import { useDispatch } from "react-redux";
 import { setContactLength } from "../rtk/features/mixedSlice";
 import MainLoading from "../components/MainLoading";
+
+
+
+
 const Contacts = () => {
   const { user } = useAppSelector((state) => state.userSlice);
   const { data, isLoading, status, refetch } = useContactsQuery(user?.token);

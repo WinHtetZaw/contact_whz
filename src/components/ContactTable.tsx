@@ -79,7 +79,7 @@ const ContactTable = (props: Props) => {
           <TrashTooltip selections={selections} setSelections={setSelections} />
         </div>
         <main className=" w-full  overflow-auto">
-          <div className="min-w-[500px] ">
+          <div className="min-w-[400px] ">
             <header className="flex w-full mb-7 py-1  border-b-[1.5px] border-slate-400">
               <span>
                 <Checkbox
@@ -107,7 +107,7 @@ const ContactTable = (props: Props) => {
                   <section
                     onClick={() => handleContactClick(el)}
                     key={index}
-                    className="py-1 even:bg-slate-50 hover:bg-orange-50   rounded flex transition-all duration-100"
+                    className="py-1 even:bg-slate-50 hover:bg-orange-50 rounded flex transition-all duration-100"
                   >
                     <span>
                       <Checkbox
@@ -177,7 +177,7 @@ const ContactTable = (props: Props) => {
                           </DropdownMenu>
                         </Dropdown>
                       </span>
-                      <span className="table-option md:hidden">
+                      <span className="table-option flex justify-center items-center md:hidden max-md:col-span-3">
                         <AddToFavorite contact={el} />
                       </span>
                     </div>

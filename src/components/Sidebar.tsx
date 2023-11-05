@@ -1,6 +1,6 @@
 import { IoTrashOutline } from "react-icons/io5";
 import { AiOutlinePlus, AiOutlineHeart } from "react-icons/ai";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../rtk/hooks";
 import { setIsSidebarOpen } from "../rtk/features/mixedSlice";
 import { useEffect } from "react";
@@ -11,25 +11,29 @@ const Sidebar = () => {
   );
   const dispatch = useAppDispatch();
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // if(window.innerWidth > 640) {
-    //   dispatch(setIsSidebarOpen(true));
-    // }
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-
-  function handleResize(this: Window) {
-    if (this.innerWidth < 640) {
-      dispatch(setIsSidebarOpen(false));
-    } else {
+    if (window.innerWidth > 640) {
       dispatch(setIsSidebarOpen(true));
     }
-  }
+    if (window.innerWidth < 640) {
+      dispatch(setIsSidebarOpen(false));
+    }
+    // window.addEventListener("resize", handleResize);
+
+    // return () => {
+    //   window.removeEventListener("resize", handleResize);
+    // };
+  }, []);
+
+  // function handleResize(this: Window) {
+  //   if (this.innerWidth < 640) {
+  //     dispatch(setIsSidebarOpen(false));
+  //   } else {
+  //     dispatch(setIsSidebarOpen(true));
+  //   }
+  // }
 
   const sidebarMenuItems = [
     {
@@ -58,12 +62,17 @@ const Sidebar = () => {
     { title: "trash", url: "/trash", icon: <IoTrashOutline /> },
   ];
 
+  const handleLinkClick = (url: string) => {
+    navigate(url);
+    dispatch(setIsSidebarOpen(false));
+  };
+
   return (
     <>
       {isSidebarOpen && (
         <div
           onClick={() => dispatch(setIsSidebarOpen(false))}
-          className="absolute sm:hidden z-40 bg-red-100 w-full h-full h-main"
+          className="absolute sm:hidden z-40 bg-transparent w-full h-full h-main"
         />
       )}
       <aside
@@ -74,26 +83,26 @@ const Sidebar = () => {
       >
         <div className="flex flex-col gap-1 p-2">
           {sidebarMenuItems.map((el) => (
-            <Link to={el.url} key={el.title} className="">
-              <section
-                className={`sidebar-item relative group overflow-hidden ${
-                  location.pathname === el.url &&
-                  "sidebar-active border-x-[3.5px] border-[#e67e22] bg-slate-10"
-                } `}
-              >
-                <div className="flex items-center gap-2 ">
-                  <span className="sidebar-icon-1">{el.icon}</span>
-                  <span className="sidebar-icon-2">{el.icon}</span>
+            <section
+              key={el.title}
+              onClick={() => handleLinkClick(el.url)}
+              className={`sidebar-item relative group overflow-hidden ${
+                location.pathname === el.url &&
+                "sidebar-active border-x-[3.5px] border-[#e67e22] bg-slate-10"
+              } `}
+            >
+              <div className="flex items-center gap-2 ">
+                <span className="sidebar-icon-1">{el.icon}</span>
+                <span className="sidebar-icon-2">{el.icon}</span>
 
-                  <h4 className="sidebar-item-title-1">
-                    <span>{el.title}</span>
-                  </h4>
-                  <h4 className="sidebar-item-title-2">
-                    <span>{el.title}</span>
-                  </h4>
-                </div>
-              </section>
-            </Link>
+                <h4 className="sidebar-item-title-1">
+                  <span>{el.title}</span>
+                </h4>
+                <h4 className="sidebar-item-title-2">
+                  <span>{el.title}</span>
+                </h4>
+              </div>
+            </section>
           ))}
         </div>
       </aside>

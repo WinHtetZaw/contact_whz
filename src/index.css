@@ -94,7 +94,6 @@ body {
     }
   }
 
-
   .sidebar-active:before {
     content: "";
     position: absolute;
@@ -231,7 +230,7 @@ body {
   }
 
   .table-header {
-    @apply table-item text-lg font-semibold text-center capitalize;
+    @apply px-3 py-1 w-full text-lg font-semibold text-center capitalize;
   }
 
   .table-checkbox {
@@ -239,7 +238,7 @@ body {
   }
 
   .table-option {
-    @apply table-item col-span-1 max-md:col-span-2 font-semibold;
+    @apply px-3 py-1 w-full col-span-1 max-md:col-span-2 font-semibold;
   }
   .transition-1 {
     @apply transition-all duration-100;
@@ -271,7 +270,7 @@ body {
   }
 
   .card-1 {
-    @apply bg-orange-50 hover:shadow-1 transition-shadow duration-100 p-5 rounded-md
+    @apply bg-orange-50 hover:shadow-1 transition-shadow duration-100 p-5 rounded-md;
   }
 }
 

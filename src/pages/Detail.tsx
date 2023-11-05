@@ -58,7 +58,10 @@ const Detail = () => {
 
             <div className="text-xl gap-5 flex justify-end items-start">
               <AddToFavorite contact={contact} />
-              <Link to={`/edit/${contact?.id}`}>
+              <Link
+                to={`/edit/${contact?.id}`}
+                state={{ stateContact: contact }}
+              >
                 <LuFileEdit />
               </Link>
               <TrashItem contact={contact} />
@@ -69,7 +72,9 @@ const Detail = () => {
               <span className="peer hover:shadow-2 transition-shadow duration-100 flex items-center justify-center w-24 rounded-full aspect-square bg-orange-500 text-slate-50">
                 <h3 className="text-[30px] select-none">{firstLetter}</h3>
               </span>
-              <h2 className=" peer-hover:screw-1 transition-transform duration-100 title-2">{contact.name}</h2>
+              <h2 className=" peer-hover:screw-1 transition-transform duration-100 title-2">
+                {contact.name}
+              </h2>
             </div>
           </section>
 
