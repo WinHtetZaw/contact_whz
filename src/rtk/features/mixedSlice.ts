@@ -7,7 +7,7 @@ export interface State {
 }
 
 const initialState: State = {
-  isSidebarOpen: true,
+  isSidebarOpen: innerWidth < 640 ? false : true,
   contactLength: 0,
 };
 

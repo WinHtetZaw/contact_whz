@@ -9,12 +9,21 @@ import { useNavigate } from "react-router-dom";
 const InputSearch = () => {
   const { user } = useAppSelector((state) => state.userSlice);
   const { data } = useContactsQuery(user?.token);
-  const [searchQuery, setSearchQuery] = useState<string>("");
-  const [selectedItem, setSelectedItem] = useState<number>(0);
+  const searchQuery = useRef<string>("");
+  const [selectedItem, setSelectedItem] = useState<number | null>(null);
   const [results, setResults] = useState<ResponseContact[]>([]);
   const [isFocus, setIsFocus] = useState<boolean>(false);
   const activeContact = useRef<ResponseContact | null>(null);
+  const [inputValue, setInputValue] = useState<string>("");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (searchQuery.current.length > 0) {
+      setInputValue(searchQuery.current);
+    } else {
+      setInputValue("");
+    }
+  }, [searchQuery.current]);
 
   useEffect(() => {
     window.addEventListener("keydown", handleKeyPress);
@@ -25,22 +34,6 @@ const InputSearch = () => {
   }, [selectedItem, results]);
 
   function handleKeyPress(this: Window, ev: KeyboardEvent) {
-    // if (ev.key === "ArrowDown") {
-    //   ev.preventDefault();
-    //   if (selectedItem === null || selectedItem === results.length - 1) {
-    //     setSelectedItem(0);
-    //   } else {
-    //     setSelectedItem(selectedItem + 1);
-    //   }
-    // } else if (ev.key === "ArrowUp") {
-    //   ev.preventDefault();
-    //   if (selectedItem === null || selectedItem === 0) {
-    //     setSelectedItem(results.length - 1);
-    //   } else {
-    //     setSelectedItem(selectedItem - 1);
-    //   }
-    // }
-
     switch (ev.key) {
       case "ArrowDown": {
         ev.preventDefault();
@@ -49,7 +42,6 @@ const InputSearch = () => {
         } else {
           setSelectedItem(selectedItem + 1);
         }
-        if (activeContact.current) setSearchQuery(activeContact.current?.name);
         break;
       }
 
@@ -60,15 +52,17 @@ const InputSearch = () => {
         } else {
           setSelectedItem(selectedItem - 1);
         }
-        if (activeContact.current) setSearchQuery(activeContact.current?.name);
         break;
       }
 
       case "Enter": {
         ev.preventDefault();
         if (activeContact.current) {
-          setSearchQuery("");
-          navigate(`/detail/${activeContact.current.id}`);
+          const id = activeContact.current.id;
+          searchQuery.current = "";
+          setSelectedItem(null);
+          activeContact.current = null;
+          navigate(`/detail/${id}`);
         }
       }
     }
@@ -77,11 +71,10 @@ const InputSearch = () => {
   const contacts = data?.contacts?.data as ResponseContact[];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
-    setSelectedItem(0);
-    const searchString = e.target.value;
+    searchQuery.current = e.target.value;
+    // const searchString = e.target.value;
     const filter = contacts.filter((contact) =>
-      contact.name.toLowerCase().includes(searchString.toLowerCase())
+      contact.name.toLowerCase().includes(searchQuery.current.toLowerCase())
     );
     setResults(filter);
   };
@@ -91,14 +84,10 @@ const InputSearch = () => {
       activeContact.current = el;
     }
 
-    const handleClick = () => {
-      setSearchQuery("");
-      navigate(`/detail/${el.id}`);
-    };
     return (
       <li
         key={el.id}
-        onClick={handleClick}
+        onClick={() => handleClick(el)}
         className={`${
           selectedItem === index ? "bg-slate-200" : "hover:bg-orange-50"
         } py-1 px-2 rounded select-none cursor-pointer transition-background duration-[0.2s]`}
@@ -108,20 +97,41 @@ const InputSearch = () => {
     );
   });
 
+  const handleClick = (el: ResponseContact) => {
+    setSelectedItem(null);
+    searchQuery.current = "";
+    activeContact.current = null;
+    navigate(`/detail/${el.id}`);
+  };
+
+  const handleClear = () => {
+    searchQuery.current = "";
+    setSelectedItem(null);
+    setInputValue("");
+    activeContact.current = null;
+  };
+
+  const handleBlur = () => {
+    setIsFocus(false);
+    setSelectedItem(null);
+    activeContact.current = null;
+  };
+
   return (
     <section className="relative w-full max-w-[700px] mx-auto flex px-3 py-1 rounded items-center bg-slate-200 text-slate-950">
       <input
-        value={searchQuery}
+        value={inputValue}
         onChange={handleChange}
         onFocus={() => setIsFocus(true)}
-        onBlur={() => setIsFocus(false)}
+        onBlur={handleBlur}
         className=" z-20 w-full outline-none bg-transparent placeholder:text-slate-700 placeholder:select-none"
         placeholder="Search..."
         type="text"
       />
 
-      {searchQuery.length > 0 && (
-        <button onClick={() => setSearchQuery("")} className="px-3">
+      {(searchQuery.current.length > 0 || isFocus) && (
+        // <button onClick={() => setSearchQuery("")} className="px-3">
+        <button onClick={handleClear} className="px-3">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -143,7 +153,7 @@ const InputSearch = () => {
       </span>
 
       <AnimatePresence>
-        {results.length > 0 && searchQuery.length > 0 && isFocus && (
+        {results.length > 0 && searchQuery.current.length > 0 && isFocus && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{

@@ -13,6 +13,9 @@ const Sidebar = () => {
   const location = useLocation();
 
   useEffect(() => {
+    // if(window.innerWidth > 640) {
+    //   dispatch(setIsSidebarOpen(true));
+    // }
     window.addEventListener("resize", handleResize);
 
     return () => {
@@ -57,10 +60,10 @@ const Sidebar = () => {
 
   return (
     <>
-      {!isSidebarOpen && (
+      {isSidebarOpen && (
         <div
-          onClick={() => dispatch(setIsSidebarOpen("toggle"))}
-          className="absolute sm:hidden z-40 bg-transparent w-full h-full h-main"
+          onClick={() => dispatch(setIsSidebarOpen(false))}
+          className="absolute sm:hidden z-40 bg-red-100 w-full h-full h-main"
         />
       )}
       <aside
