@@ -5,6 +5,12 @@ export type RegisterUserInfo = {
   password_confirmation: string;
 };
 
+export type PasswordChange = {
+  current_password: string;
+  password: string;
+  password_confirmation: string;
+};
+
 export type LoginUserInfo = {
   email: string;
   password: string;

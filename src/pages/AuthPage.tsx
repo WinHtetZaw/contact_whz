@@ -5,7 +5,7 @@ import { useState } from "react";
 const AuthPage = () => {
   const [isLoginSection, setIsLoginSection] = useState<boolean>(false);
   return (
-    <main className="relative h-screen overflow-hidden mx-auto">
+    <main className="relative h-screen overflow-hidden mx-auto bg-gradient-2">
       <div
         className={` ${
           isLoginSection ? "h-[85vh]" : "h-[15vh]"

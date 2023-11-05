@@ -12,6 +12,7 @@ import { Button } from "@nextui-org/react";
 import { useUpdateMutation } from "../../rtk/services/contactApi";
 import { useAppSelector } from "../../rtk/hooks";
 import { useLocation, useNavigate } from "react-router-dom";
+import BackBtn from "../../utils/BackBtn";
 
 type IsFocus = {
   name: boolean;
@@ -31,10 +32,10 @@ const EditForm = () => {
     formState: { errors },
   } = useForm<Contact>({
     defaultValues: {
-      name: state.stateContact.name,
-      email: state.stateContact.email,
-      phone: state.stateContact.phone,
-      address: state.stateContact.address,
+      name: state?.stateContact.name,
+      email: state?.stateContact.email,
+      phone: state?.stateContact.phone,
+      address: state?.stateContact.address,
     },
   });
 
@@ -85,8 +86,11 @@ const EditForm = () => {
     }
   };
   return (
-    <>
-      <h2 className="form-title mt-10">Edit Contact</h2>
+    <div className="p-5">
+      <div className="">
+        <BackBtn />
+      </div>
+      <h2 className="form-title mt-5">Edit Contact</h2>
       <form className="form" onSubmit={handleSubmit(onSubmit)}>
         {/* name field */}
         <section className="flex flex-col justify-center gap-y-1 relative">
@@ -220,7 +224,7 @@ const EditForm = () => {
           <textarea
             disabled={isLoading}
             className="form-input"
-            {...register("address", { required: true, maxLength: 50 })}
+            {...register("address", { required: true, maxLength: 255 })}
             autoComplete="off"
             rows={3}
             onFocus={() => setIsFocus({ ...isFocus, address: true })}
@@ -233,7 +237,7 @@ const EditForm = () => {
           )}
           {errors.address && errors.address.type === "maxLength" && (
             <span className="text-sm text-rose-600">
-              Address should be 50 characters or fewer
+              Address should be 255 characters or fewer
             </span>
           )}
         </section>
@@ -246,7 +250,7 @@ const EditForm = () => {
           Save Changes
         </Button>
       </form>
-    </>
+    </div>
   );
 };
 

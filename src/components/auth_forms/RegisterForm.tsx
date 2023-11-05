@@ -11,6 +11,7 @@ import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { SerializedError } from "@reduxjs/toolkit";
 import { Button } from "@nextui-org/react";
 import { PiEyeClosedLight, PiEyeLight } from "react-icons/pi";
+import { handleLabelClick, validateEmail } from "../../shared/helper";
 
 type IsFocus = {
   name: boolean;
@@ -28,14 +29,7 @@ const RegisterForm = (props: {
     reset,
     watch,
     formState: { errors },
-  } = useForm<RegisterUserInfo>({
-    defaultValues: {
-      name: "johndoe",
-      email: "doedoe762000@gmail.com",
-      password: "aaaaaaaa",
-      password_confirmation: "aaaaaaaa",
-    },
-  });
+  } = useForm<RegisterUserInfo>();
   const [show, setShow] = useState({
     password: false,
     password_confirmation: false,
@@ -49,17 +43,6 @@ const RegisterForm = (props: {
   });
 
   const [createRegister, { isLoading }] = useCreateRegisterMutation();
-
-  const handleLabelClick = (e: React.MouseEvent<HTMLElement>) => {
-    const target = e.target as HTMLElement;
-    const nextElement = target.nextElementSibling as HTMLElement | null;
-    nextElement && nextElement.focus();
-  };
-
-  const validateEmail = (value: string): boolean => {
-    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return emailPattern.test(value);
-  };
 
   const onSubmit: SubmitHandler<RegisterUserInfo> = async (data) => {
     // const userData: { data: ResponseRegister } | { error: unknown } =
@@ -94,7 +77,7 @@ const RegisterForm = (props: {
             onClick={handleLabelClick}
             className={`${
               watch("name")?.length > 0 || isFocus.name
-                ? "-top-3 text-slate-700"
+                ? "-top-3 text-slate-500"
                 : "top-2 text-slate-400"
             } input-label`}
             htmlFor="name"
@@ -127,7 +110,7 @@ const RegisterForm = (props: {
             onClick={handleLabelClick}
             className={`${
               watch("email")?.length > 0 || isFocus.email
-                ? "-top-3 text-slate-700"
+                ? "-top-3 text-slate-500"
                 : "top-2 text-slate-400"
             } input-label`}
             htmlFor="email"
@@ -167,7 +150,7 @@ const RegisterForm = (props: {
             onClick={handleLabelClick}
             className={`${
               watch("password")?.length > 0 || isFocus.password
-                ? "-top-3 text-slate-700"
+                ? "-top-3 text-slate-500"
                 : "top-2 text-slate-400"
             } input-label`}
             htmlFor="password"
@@ -219,7 +202,7 @@ const RegisterForm = (props: {
             className={`${
               watch("password_confirmation")?.length > 0 ||
               isFocus.password_confirmation
-                ? "-top-3 text-slate-700"
+                ? "-top-3 text-slate-500"
                 : "top-2 text-slate-400"
             } input-label`}
             htmlFor="password"

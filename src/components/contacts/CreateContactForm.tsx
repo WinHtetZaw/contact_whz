@@ -11,6 +11,8 @@ import { toast } from "react-hot-toast";
 import { Button } from "@nextui-org/react";
 import { useCreateContactMutation } from "../../rtk/services/contactApi";
 import { useAppSelector } from "../../rtk/hooks";
+import { faker } from "@faker-js/faker";
+import { handleLabelClick } from "../../shared/helper";
 
 type IsFocus = {
   name: boolean;
@@ -21,11 +23,18 @@ type IsFocus = {
 
 const CreateContactForm = () => {
   const { user } = useAppSelector((state) => state.userSlice);
+  const [fakeInfo, setFakeInfo] = useState<Contact>({
+    name: "",
+    phone: 11111111,
+    email: "",
+    address: "",
+  });
   const {
     register,
     handleSubmit,
     reset,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<Contact>();
 
@@ -35,14 +44,19 @@ const CreateContactForm = () => {
     email: false,
     address: false,
   });
+  // console.log(fakeInfo.name);
+  const handleFakeClick = () => {
+    setFakeInfo({ ...fakeInfo, name: faker.person.fullName() });
+    setValue("name", faker.person.fullName());
+    setValue("phone", faker.number.int({ min: 10000000, max: 999999999999 }));
+    setValue("email", faker.internet.email());
+    setValue(
+      "address",
+      `${faker.location.country()} / ${faker.location.state()} / ${faker.location.city()} / ${faker.location.streetAddress()}`
+    );
+  };
 
   const [createContact, { isLoading }] = useCreateContactMutation();
-
-  const handleLabelClick = (e: React.MouseEvent<HTMLElement>) => {
-    const target = e.target as HTMLElement;
-    const nextElement = target.nextElementSibling as HTMLElement | null;
-    nextElement && nextElement.focus();
-  };
 
   const validateEmail = (value: string): boolean => {
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -60,10 +74,12 @@ const CreateContactForm = () => {
       if (contactData.data.success) {
         reset();
         toast.success("Successfully Register!");
+        // console.log(contactData)
       }
 
       if (!contactData.data.success) {
         toast.success("Something wrong!");
+        // console.log(contactData)
       }
     }
 
@@ -72,8 +88,9 @@ const CreateContactForm = () => {
     }
   };
   return (
-    <>
-      <h2 className="form-title mt-10">Create Contact</h2>
+    <main className="p-5">
+      <h2 className="form-title mt-5">Create Contact</h2>
+
       <form className="form" onSubmit={handleSubmit(onSubmit)}>
         {/* name field */}
         <section className="flex flex-col justify-center gap-y-1 relative">
@@ -81,7 +98,7 @@ const CreateContactForm = () => {
             onClick={handleLabelClick}
             className={`${
               watch("name")?.length > 0 || isFocus.name
-                ? "-top-3 text-sm text-slate-700"
+                ? "-top-3 text-sm text-slate-500"
                 : "top-2 text-base text-slate-400"
             } input-label`}
             htmlFor="name"
@@ -91,7 +108,11 @@ const CreateContactForm = () => {
           <input
             disabled={isLoading}
             className="form-input"
-            {...register("name", { required: true, maxLength: 50 })}
+            {...register("name", {
+              required: true,
+              maxLength: 50,
+              minLength: 2,
+            })}
             autoComplete="off"
             onFocus={() => setIsFocus({ ...isFocus, name: true })}
             onBlur={() => setIsFocus({ ...isFocus, name: false })}
@@ -99,6 +120,11 @@ const CreateContactForm = () => {
           {errors.name && errors.name.type === "required" && (
             <span className="text-sm text-rose-600">
               The name field is required
+            </span>
+          )}
+          {errors.name && errors.name.type === "minLength" && (
+            <span className="text-sm text-rose-600">
+              Name should be 2 characters or more
             </span>
           )}
           {errors.name && errors.name.type === "maxLength" && (
@@ -114,7 +140,7 @@ const CreateContactForm = () => {
             onClick={handleLabelClick}
             className={`${
               watch("phone")?.toString().length > 0 || isFocus.phone
-                ? "-top-3 text-sm text-slate-700"
+                ? "-top-3 text-sm text-slate-500"
                 : "top-2 text-base text-slate-400"
             } input-label`}
             htmlFor="phone"
@@ -157,7 +183,7 @@ const CreateContactForm = () => {
             onClick={handleLabelClick}
             className={`${
               watch("email")?.length > 0 || isFocus.email
-                ? "-top-3 text-sm text-slate-700"
+                ? "-top-3 text-sm text-slate-500"
                 : "top-2 text-base text-slate-400"
             } input-label`}
             htmlFor="email"
@@ -197,7 +223,7 @@ const CreateContactForm = () => {
             onClick={handleLabelClick}
             className={`${
               watch("address")?.length > 0 || isFocus.address
-                ? "-top-3 text-sm text-slate-700"
+                ? "-top-3 text-sm text-slate-500"
                 : "top-2 text-base text-slate-400"
             } input-label`}
             htmlFor="address"
@@ -207,7 +233,7 @@ const CreateContactForm = () => {
           <textarea
             disabled={isLoading}
             className="form-input"
-            {...register("address", { required: true, maxLength: 50 })}
+            {...register("address", { required: true, maxLength: 255 })}
             autoComplete="off"
             rows={3}
             onFocus={() => setIsFocus({ ...isFocus, address: true })}
@@ -220,9 +246,12 @@ const CreateContactForm = () => {
           )}
           {errors.address && errors.address.type === "maxLength" && (
             <span className="text-sm text-rose-600">
-              Address should be 50 characters or fewer
+              Address should be 255 characters or fewer
             </span>
           )}
+          <button className="mt-1 w-fit" type="button" onClick={handleFakeClick}>
+            Generate Fake Information
+          </button>
         </section>
 
         <Button
@@ -233,7 +262,7 @@ const CreateContactForm = () => {
           Create
         </Button>
       </form>
-    </>
+    </main>
   );
 };
 

@@ -35,10 +35,48 @@ export const contactApi = createApi({
       }),
       invalidatesTags: ["contact"],
     }),
+    // user-logout
+    userLogout: builder.mutation({
+      query: (token) => ({
+        url: `user-logout`,
+        headers: { authorization: `Bearer ${token}` },
+        method: "POST",
+      }),
+      invalidatesTags: ["contact"],
+    }),
+
+    // password change
+    passwordChange: builder.mutation({
+      query: ({ token, data }) => ({
+        url: `change-password`,
+        headers: { authorization: `Bearer ${token}` },
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["contact"],
+    }),
 
     contacts: builder.query({
       query: (token) => ({
         url: `contact`,
+        method: "GET",
+        headers: { authorization: `Bearer ${token}` },
+      }),
+      providesTags: ["contact"],
+    }),
+
+    getContact: builder.query({
+      query: ({ token, id }) => ({
+        url: `contact/${id}`,
+        method: "GET",
+        headers: { authorization: `Bearer ${token}` },
+      }),
+      providesTags: ["contact"],
+    }),
+
+    getProfile: builder.query({
+      query: (token) => ({
+        url: `user-profile`,
         method: "GET",
         headers: { authorization: `Bearer ${token}` },
       }),
@@ -53,6 +91,14 @@ export const contactApi = createApi({
         body: data,
       }),
       invalidatesTags: ["contact"],
+    }),
+
+    deleteContact: builder.mutation({
+      query: ({ token, id }) => ({
+        url: `contact/${id}`,
+        method: "DELETE",
+        headers: { authorization: `Bearer ${token}` },
+      }),
     }),
 
     createContact: builder.mutation<ResponseLogin, unknown>({
@@ -72,7 +118,12 @@ export const contactApi = createApi({
 export const {
   useCreateRegisterMutation,
   useCreateLoginMutation,
+  useUserLogoutMutation,
   useCreateContactMutation,
+  usePasswordChangeMutation,
   useUpdateMutation,
+  useGetProfileQuery,
+  useGetContactQuery,
   useContactsQuery,
+  useDeleteContactMutation,
 } = contactApi;

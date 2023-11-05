@@ -8,12 +8,13 @@ import {
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { SerializedError } from "@reduxjs/toolkit";
 import { toast } from "react-hot-toast";
-import { Button } from "@nextui-org/react";
+import { Button, Tooltip } from "@nextui-org/react";
 import { useCreateLoginMutation } from "../../rtk/services/contactApi";
 import { PiEyeClosedLight, PiEyeLight } from "react-icons/pi";
 import { useAppDispatch } from "../../rtk/hooks";
 import { setUser } from "../../rtk/features/userSlice";
 import { useNavigate } from "react-router-dom";
+import { handleLabelClick, validateEmail } from "../../shared/helper";
 
 type IsFocus = {
   email: boolean;
@@ -48,17 +49,6 @@ const LoginForm = () => {
 
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-
-  const handleLabelClick = (e: React.MouseEvent<HTMLElement>) => {
-    const target = e.target as HTMLElement;
-    const nextElement = target.nextElementSibling as HTMLElement | null;
-    nextElement && nextElement.focus();
-  };
-
-  const validateEmail = (value: string): boolean => {
-    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return emailPattern.test(value);
-  };
 
   const onSubmit: SubmitHandler<LoginUserInfo> = async (data) => {
     // const userData: { data: ResponseLogin } =await createLogin(data);
@@ -96,7 +86,7 @@ const LoginForm = () => {
             onClick={handleLabelClick}
             className={`${
               watch("email")?.length > 0 || isFocus.email
-                ? "-top-3 text-slate-100"
+                ? "-top-3 text-slate-200"
                 : "top-2 text-slate-300"
             } input-label-login`}
             htmlFor="email"
@@ -138,7 +128,7 @@ const LoginForm = () => {
             onClick={handleLabelClick}
             className={`${
               watch("password")?.length > 0 || isFocus.password
-                ? "-top-3 text-slate-100"
+                ? "-top-3 text-slate-200"
                 : "top-2 text-slate-300"
             } input-label-login`}
             htmlFor="password"
@@ -181,14 +171,17 @@ const LoginForm = () => {
               Password should be 8 characters or more
             </span>
           )}
+          <Tooltip content="This feature is currently unavailable">
+            <p className="mt-1 w-fit capitalize text-sm underline">forget password</p>
+          </Tooltip>
         </section>
 
         <Button
           type="submit"
           isLoading={isLoading}
-          className="submit-btn rounded-lg bg-slate-600 text-slate-100"
+          className="submit-btn rounded-lg bg-slate-600 hover:bg-slate-500 text-slate-200"
         >
-          Register
+          Log In
         </Button>
       </form>
     </>
