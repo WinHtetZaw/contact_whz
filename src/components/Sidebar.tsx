@@ -64,7 +64,8 @@ const Sidebar = () => {
 
   const handleLinkClick = (url: string) => {
     navigate(url);
-    dispatch(setIsSidebarOpen(false));
+    innerWidth < 640 && dispatch(setIsSidebarOpen(false));
+    // dispatch(setIsSidebarOpen(false));
   };
 
   return (
